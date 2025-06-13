@@ -62,7 +62,7 @@ command -v jq >/dev/null 2>&1 || { echo "❌ jq is required."; exit 1; }
 echo ""
 echo "🔄 Setting up Kong Gateway..."
 echo "================================"
-./scripts/migrate-to-gateway.sh
+./scripts/setup-gateway-services.sh
 if [ $? -ne 0 ]; then
     echo "❌ Kong Gateway setup failed"
     exit 1
