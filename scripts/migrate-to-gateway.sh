@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "🔐 Migrating APIs to Kong Gateway..."
+echo "🔐 Setting up Gateway Services in Kong Konnect..."
 echo ""
 
 # Check if running from repo root
@@ -11,42 +11,12 @@ if [ ! -f "kong-config.yaml" ]; then
     exit 1
 fi
 
-# Load environment variables safely
-if [ -f .env ]; then
-    # Source the .env file properly (handles comments and spaces)
-    set -a  # automatically export all variables
-    source .env
-    set +a  # turn off automatic export
-else
-    echo "❌ No .env file found. Please run setup.sh first."
-    exit 1
-fi
-
 # Validate environment variables
 if [ -z "$KONNECT_CONTROL_PLANE" ] || [ -z "$KONNECT_TOKEN" ]; then
     echo "❌ Error: Missing required environment variables"
     echo "   Please set:"
     echo "   - KONNECT_CONTROL_PLANE"
     echo "   - KONNECT_TOKEN"
-    exit 1
-fi
-
-# Check if deck is installed
-if ! command -v deck &> /dev/null; then
-    echo "❌ deck CLI is required but not installed."
-    echo "   Install from: https://docs.konghq.com/deck/latest/installation/"
-    exit 1
-fi
-
-# Test Konnect connection
-echo "📡 Connecting to Kong Konnect..."
-echo "   Control Plane: $KONNECT_CONTROL_PLANE"
-
-if ! deck gateway ping \
-    --konnect-control-plane-name "$KONNECT_CONTROL_PLANE" \
-    --konnect-token "$KONNECT_TOKEN"; then
-    echo "❌ Cannot connect to Kong Konnect"
-    echo "   Please check your KONNECT_TOKEN and KONNECT_CONTROL_PLANE"
     exit 1
 fi
 
@@ -82,5 +52,3 @@ echo ""
 echo "⚠️  Services still unprotected:"
 echo "  - inventory-api"
 echo "  - customer-api"
-echo ""
-echo "These will be flagged by the Kong Best Practices scorecard!"

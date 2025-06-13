@@ -32,16 +32,6 @@ if [ -z "$KONNECT_TOKEN" ]; then
     echo ""
 fi
 
-# Save to .env file for future use
-cat > .env << EOF
-# Kong Konnect Configuration
-KONNECT_CONTROL_PLANE=$KONNECT_CONTROL_PLANE
-KONNECT_TOKEN=$KONNECT_TOKEN
-EOF
-
-echo "✅ Configuration saved to .env file"
-echo ""
-
 # Test Konnect connection
 echo "🔍 Testing Konnect connection..."
 if deck gateway ping \
@@ -59,6 +49,17 @@ command -v gh >/dev/null 2>&1 || { echo "❌ GitHub CLI (gh) is required. Instal
 command -v git >/dev/null 2>&1 || { echo "❌ Git is required."; exit 1; }
 command -v deck >/dev/null 2>&1 || { echo "❌ decK is required. Install from: https://docs.konghq.com/deck/latest/installation/"; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "❌ jq is required."; exit 1; }
+
+# Run Kong Gateway migration
+echo ""
+echo "🔄 Setting up Kong Gateway..."
+echo "================================"
+./scripts/migrate-to-gateway.sh
+if [ $? -ne 0 ]; then
+    echo "❌ Kong Gateway setup failed"
+    exit 1
+fi
+echo "✅ Kong Gateway setup complete"
 
 # Check GitHub authentication
 if ! gh auth status >/dev/null 2>&1; then
