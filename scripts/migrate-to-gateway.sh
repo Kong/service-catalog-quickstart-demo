@@ -4,13 +4,6 @@ set -e
 echo "🔐 Setting up Gateway Services in Kong Konnect..."
 echo ""
 
-# Check if running from repo root
-if [ ! -f "kong-config.yaml" ]; then
-    echo "❌ Error: kong-config.yaml not found"
-    echo "   Please run this script from the repository root"
-    exit 1
-fi
-
 # Validate environment variables
 if [ -z "$KONNECT_CONTROL_PLANE" ] || [ -z "$KONNECT_TOKEN" ]; then
     echo "❌ Error: Missing required environment variables"

@@ -4,6 +4,14 @@ set -e
 echo "🚀 Kong Service Catalog Demo Setup"
 echo "=================================="
 
+# Check if running from repo root
+if [ ! -f "kong-config.yaml" ]; then
+    echo "❌ Error: Please run this script from the repository root"
+    exit 1
+fi
+# Save root directory for later
+ORIGINAL_DIR=$(pwd)
+
 # Clean up any existing temp directory from failed runs
 if [ -d "local-repo" ]; then
     echo "⚠️  Found existing local-repo directory from previous run"
@@ -223,6 +231,7 @@ echo "Set up PagerDuty integration to see incident data in Service Catalog?"
 echo "This will create sample incidents for your services."
 echo ""
 read -p "Do you want to set up PagerDuty? (y/N): " SETUP_PAGERDUTY
+cd "$ORIGINAL_DIR"
 
 if [[ "$SETUP_PAGERDUTY" =~ ^[Yy]$ ]]; then
     echo ""
