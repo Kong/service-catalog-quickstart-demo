@@ -1,0 +1,50 @@
+name: API Tests - Legacy Services
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-user:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: User API tests
+        run: |
+          echo "👤 Running user API tests..."
+          sleep 1
+          echo "❌ ERROR: No test files found!"
+          echo "  Expected: services/user-api/tests/"
+          echo "  Found: nothing"
+          exit 1
+
+  test-inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Inventory API tests
+        run: |
+          echo "📦 Running inventory API tests..."
+          echo "  Starting test suite..."
+          sleep 2
+          echo "❌ ERROR: Connection timeout"
+          echo "  Failed to connect to test database"
+          echo "  Error: ECONNREFUSED 127.0.0.1:5432"
+          exit 1
+
+  test-customer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Customer API tests
+        run: |
+          echo "🏢 Running customer API tests..."
+          sleep 1
+          echo "⚠️  Warning: Testing deprecated API"
+          echo "❌ ERROR: 8 tests failed"
+          echo "  - GET /customers returns 404"
+          echo "  - POST /customers returns 410 (Gone)"
+          echo "  Tests: 8 failed, 2 passed"
+          exit 1

@@ -1,0 +1,8 @@
+# Environment variables
+.env
+
+# Kong backups
+kong-backup-*.yaml
+
+# Temporary files
+/tmp/

@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: Payment API
+  version: 1.0.0 # ISSUE: Actual API is v2.0
+  description: Payment processing service
+servers:
+  - url: https://api.example.com/payment-api
+paths:
+  /payments:
+    post:
+      summary: Process a payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                currency:
+                  type: string
+                # ISSUE: Missing required card details that v2 needs
+      responses:
+        "200":
+          description: Payment processed
+        # ISSUE: No error responses defined
+  /payments/{id}/refund:
+    post:
+      summary: Refund a payment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Refund processed
+security:
+  - apiKey: [] # ISSUE: Using API key instead of OAuth2
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-Key

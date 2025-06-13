@@ -1,0 +1,62 @@
+_format_version: "3.0"
+
+services:
+  - name: user-api
+    url: http://backend.example.com/user-api
+    routes:
+      - name: user-api-route
+        paths:
+          - /user-api
+    plugins:
+      - name: key-auth
+        config:
+          key_names:
+            - api-key
+      - name: rate-limiting
+        config:
+          minute: 100
+          policy: local
+
+  - name: payment-api
+    url: http://backend.example.com/payment-api
+    routes:
+      - name: payment-api-route
+        paths:
+          - /payment-api
+    plugins:
+      - name: basic-auth
+      - name: rate-limiting
+        config:
+          minute: 60
+          policy: local
+
+  - name: analytics-api
+    url: http://backend.example.com/analytics-api
+    routes:
+      - name: analytics-api-route
+        paths:
+          - /analytics-api
+    plugins:
+      - name: openid-connect
+        config:
+          issuer: "https://auth.example.com/.well-known/openid-configuration"
+          client_id: ["customer-api-client"]
+          auth_methods:
+            - "bearer"
+            - "introspection"
+      - name: rate-limiting
+        config:
+          minute: 1000
+          policy: local
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+          headers:
+            - Authorization
+            - Content-Type
+# Note: inventory-api and customer-api are intentionally not configured
+# This demonstrates services not yet behind the gateway
