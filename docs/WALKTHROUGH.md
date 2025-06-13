@@ -5,43 +5,39 @@
 ## Prerequisites ✅
 
 - Demo repository created with `setup.sh`
-- Kong Konnect account
-- Kong Gateway running (for gateway migration demo)
+- Github integration setup when running `setup.sh`
 
-## Phase 1: Discovery (5 minutes)
+## Phase 1: Setup and Discovery (10 minutes)
 
-### 1.1 Connect GitHub Integration
+### 1.1 Connect Pagerduty Integration
 
 1. Log into **Kong Konnect**
 2. Navigate to **Service Catalog** (left sidebar)
 3. Click **Integrations** → **Configure Integrations**
-4. Click **GitHub** → **Add Configuration**
-5. Authenticate with GitHub
-6. Select your demo repository (kong-demo-apis-TIMESTAMP)
-7. Click **Save**
+4. Click **Pagerduty** → **Add Configuration**
+5. Authenticate with Pagerduty
+6. Click **Save**
 
-**What happens:**
+### 1.2 Create Services from resources
 
-- Service Catalog discovers 5 API services
-- Automatically extracts OpenAPI specifications
-- Shows service health overview
+Navigate to **Service Catalog** → **Resources**. We will create two services managed by different teams by linking the relevant gateway services, pagerduty, and github repo resources.
 
-### 1.2 Review Discovery Dashboard
+**Service 1: "Core Platform Services"**
 
-Navigate to **Service Catalog** → **Services**
+- User API - Authentication, user profiles, identity management
+- Payment API - Payment processing, billing, transactions
+- Customer API - Customer data, CRM, legacy customer management
 
-You should see:
+Description: Manages the foundational platform services that handle core business entities (users, customers) and critical operations (payments)
 
-- 5 services discovered
-- 2 services with API specifications
-- 1 service marked as deprecated
-- 2 services missing documentation
+**Service 2: "Business Operation Services"**
 
-**Key talking points:**
+- Analytics API - Reporting, metrics, business intelligence
+- Inventory API - Product catalog, stock management, inventory tracking
 
-- "Instant visibility into all APIs in our repository"
-- "Found services we didn't know existed"
-- "Immediately see which APIs lack documentation"
+Rationale: Support business operations, reporting, and product management
+
+### 1.3 Pull in relevant specs to each service
 
 ## Phase 2: Apply Scorecards (5 minutes)
 
@@ -81,19 +77,22 @@ You should see:
 
 - ❌ All services initially fail (not in gateway)
 
-## Phase 3: Gateway Migration (5 minutes)
+### 2.2 Create Service Maturity Scorecard
 
-### 3.1 Review Current State
+1. Create another scorecard: "Kong Best Practices"
 
-Show that scorecards reveal:
+**Results:**
 
-- No services are behind the gateway
-- No authentication configured
-- No rate limiting
+-
 
-### 3.2 Migrate Services
+## Phase 3: Apply fixes
 
-```bash
-# Run from demo directory
-./scripts/migrate-to-gateway.sh
-```
+Update specs
+
+Apply plugins
+
+Resolve pagerduty incidents
+
+Merge PRs
+
+Add documentation
