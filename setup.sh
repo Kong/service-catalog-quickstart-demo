@@ -201,6 +201,43 @@ cd ..
 echo "Removing temp-repo"
 rm -rf temp-repo
 
+# PagerDuty Setup (Optional)
+echo ""
+echo "📟 PagerDuty Setup (Optional)"
+echo "============================="
+echo "Set up PagerDuty integration to see incident data in Service Catalog?"
+echo "This will create sample incidents for your services."
+echo ""
+read -p "Do you want to set up PagerDuty? (y/N): " SETUP_PAGERDUTY
+
+if [[ "$SETUP_PAGERDUTY" =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "To get your PagerDuty API key:"
+    echo "1. Go to https://app.pagerduty.com/api_keys"
+    echo "2. Click '+ Create New API Key'"
+    echo "3. Give it a name like 'Kong Demo'"
+    echo "4. Copy the key (you won't see it again!)"
+    echo ""
+    read -p "Enter your PagerDuty API Key: " PAGERDUTY_API_KEY
+    
+    # Validate the API key works
+    echo "🔍 Validating PagerDuty API key..."
+    if curl -s -H "Authorization: Token token=$PAGERDUTY_API_KEY" \
+        -H "Accept: application/vnd.pagerduty+json;version=2" \
+        https://api.pagerduty.com/abilities | grep -q '"abilities"'; then
+        echo "✅ PagerDuty API key validated"
+        
+        # Create PagerDuty services and incidents
+        echo "🚨 Creating PagerDuty services and sample incidents..."
+        ./scripts/setup-pagerduty.sh "$PAGERDUTY_API_KEY"
+        
+    else
+        echo "❌ Invalid PagerDuty API key. Skipping PagerDuty setup."
+    fi
+else
+    echo "⏭️  Skipping PagerDuty setup"
+fi
+
 # Final summary
 echo ""
 echo "✅ Demo environment created successfully!"
