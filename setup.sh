@@ -141,7 +141,7 @@ git checkout -b fix/payment-errors
 echo "# Investigating timeout issues" >> services/payment-api/README.md  
 git add . && git commit -m "Debug payment timeouts"
 git push origin fix/payment-errors
-gh pr create --title "Fix payment API timeouts" --body "Complex issue, needs investigation"
+gh pr create --title "Fix Payment API Timeouts" --body "Complex issue, needs investigation"
 
 # Trigger a couple more workflow runs
 git checkout main
@@ -153,7 +153,7 @@ git checkout -b feature/improve-inventory
 echo "# Inventory API improvements" >> services/inventory-api/README.md
 git add . && git commit -m "Start inventory improvements"
 git push origin feature/improve-inventory
-gh pr create --title "Modernize inventory API" --body "Long-running effort to improve the inventory service"
+gh pr create --title "Modernize Inventory API" --body "Long-running effort to improve the inventory service"
 
 git checkout main
 
