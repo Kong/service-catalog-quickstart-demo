@@ -1,8 +1,8 @@
 # Environment variables
 .env
 
-# Kong backups
-kong-backup-*.yaml
+# Kong gateway backups
+/scripts/deck-backup/*
 
 # Temporary files
 /tmp/
