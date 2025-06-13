@@ -5,10 +5,10 @@ echo "🚀 Kong Service Catalog Demo Setup"
 echo "=================================="
 
 # Clean up any existing temp directory from failed runs
-if [ -d "temp-repo" ]; then
-    echo "⚠️  Found existing temp-repo directory from previous run"
+if [ -d "local-repo" ]; then
+    echo "⚠️  Found existing local-repo directory from previous run"
     echo "   Cleaning up..."
-    rm -rf temp-repo
+    rm -rf local-repo
 fi
 
 # Kong Konnect Configuration
@@ -76,11 +76,29 @@ echo "📦 Creating repository: $REPO_NAME"
 
 # Create and clone repository
 gh repo create $REPO_NAME --public --description "Kong Service Catalog Demo - API Services"
-git clone "https://github.com/$GITHUB_USER/$REPO_NAME" temp-repo
-cd temp-repo
+git clone "https://github.com/$GITHUB_USER/$REPO_NAME" local-repo
+cd local-repo
 
 # Copy demo assets
 cp -r ../demo-assets/api-services/. .
+
+echo "✅ Repository created successfully!"
+echo ""
+echo "🔗 Repository URL: https://github.com/$GITHUB_USERNAME/$REPO_NAME"
+echo ""
+echo "======================================"
+echo "⚠️  IMPORTANT: Link this repository in Service Catalog NOW"
+echo "======================================"
+echo ""
+echo "1. Go to your Service Catalog"
+echo "2. Navigate to Settings → Integrations → GitHub"
+echo "3. Add this repository: $GITHUB_USERNAME/$REPO_NAME"
+echo "4. Wait for the sync to complete"
+echo ""
+read -p "Press Enter once you've linked the repository in Service Catalog... "
+echo ""
+echo "Great! Continuing with setup..."
+echo ""
 
 # Initial commit - this now includes the .github/workflows/api-tests.yml
 git add .
@@ -195,11 +213,6 @@ gh issue create \
   --title "No API linting in CI/CD pipeline" \
   --body "OpenAPI specs are not validated in CI/CD. We should add spectral or similar to ensure specs meet standards." \
   --label "ci-cd,quality"
-
-# Cleanup local repo
-cd ..
-echo "Removing temp-repo"
-rm -rf temp-repo
 
 # PagerDuty Setup (Optional)
 echo ""
