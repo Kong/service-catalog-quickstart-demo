@@ -2,7 +2,10 @@
 .env
 
 # Kong gateway backups
-/scripts/deck-backup/*
+/scripts/deck/backup/*
+
+# Ensure when new repo is created, it's not tracked by the template repo
+/local-repo
 
 # Temporary files
 /tmp/

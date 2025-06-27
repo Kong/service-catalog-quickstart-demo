@@ -5,7 +5,7 @@ echo "🚀 Kong Service Catalog Demo Setup"
 echo "=================================="
 
 # Check if running from repo root
-if [ ! -f "kong-config.yaml" ]; then
+if [ ! -f "scripts/deck/kong-config.yaml" ]; then
     echo "❌ Error: Please run this script from the repository root"
     exit 1
 fi

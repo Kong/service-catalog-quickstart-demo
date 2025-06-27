@@ -18,7 +18,7 @@ echo "💾 Backing up current Kong configuration..."
 deck gateway dump \
     --konnect-control-plane-name "$KONNECT_CONTROL_PLANE" \
     --konnect-token "$KONNECT_TOKEN" \
-    -o "scripts/deck-backup/cp-${KONNECT_CONTROL_PLANE}-backup.yaml"
+    -o "scripts/deck/backup/cp-${KONNECT_CONTROL_PLANE}-backup.yaml"
 
 # Apply new configuration
 echo "🚀 Applying gateway configuration..."
@@ -30,7 +30,7 @@ echo ""
 
 # Sync to Kong Gateway
 echo "🔄 Syncing configuration to Kong Konnect..."
-deck gateway sync kong-config.yaml \
+deck gateway sync ./scripts/deck/kong-config.yaml \
     --konnect-control-plane-name "$KONNECT_CONTROL_PLANE" \
     --konnect-token "$KONNECT_TOKEN"
 
