@@ -35,7 +35,7 @@ kong-service-catalog-demo/
 
 ### Step 1: Initialize Demo Environment
 
-Run the setup script to create your demo repository:
+Clone the repo locally and run the setup script to create your demo repository:
 
 ```bash
 ./setup.sh
