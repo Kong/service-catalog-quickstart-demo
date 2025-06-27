@@ -117,6 +117,9 @@ For this quickstart, we need to map the same Github monorepo resource to both se
 2. Configure the rules to match the image below
 3. Apply to: The two services we just created
 
+<img width="1677" alt="Screenshot 2025-06-27 at 12 20 31 PM" src="https://github.com/user-attachments/assets/712babf6-9f0f-4811-af55-30516d8e269e" />
+
+
 ### Step 6: Import API Specifications
 
 Import OpenAPI specs into each service by navigating to each service, opening the **API Specs** tabs, add a new API spec, choose Github as the source, select the repo that setup script created, and select the API with the **Spec** dropdown.
