@@ -26,9 +26,20 @@ echo "-----------------------------"
 
 # Check for Konnect environment variables
 if [ -z "$KONNECT_CONTROL_PLANE" ]; then
-    echo "Enter your Konnect Control Plane name (or press Enter for 'default'):"
-    read -r KONNECT_CONTROL_PLANE
-    KONNECT_CONTROL_PLANE=${KONNECT_CONTROL_PLANE:-default}
+    while true; do
+        echo "Enter your Konnect Control Plane name (Control Plane names are case sensitive):"
+        read -r KONNECT_CONTROL_PLANE
+        
+        # Trim whitespace
+        KONNECT_CONTROL_PLANE=$(echo "$KONNECT_CONTROL_PLANE" | xargs)
+        
+        if [ -n "$KONNECT_CONTROL_PLANE" ]; then
+            break
+        else
+            echo "❌ Control Plane name is required and cannot be empty."
+            echo ""
+        fi
+    done
     export KONNECT_CONTROL_PLANE
 fi
 
@@ -40,14 +51,13 @@ if [ -z "$KONNECT_TOKEN" ]; then
     echo ""
 fi
 
-# Test Konnect connection
 echo "🔍 Testing Konnect connection..."
 if deck gateway ping \
     --konnect-control-plane-name "$KONNECT_CONTROL_PLANE" \
     --konnect-token "$KONNECT_TOKEN" 2>/dev/null; then
     echo "✅ Successfully connected to Konnect on this control plane: $KONNECT_CONTROL_PLANE!"
 else
-    echo "❌ Failed to connect to Konnect. Please check your credentials."
+    echo "❌ Failed to connect to Konnect. Please check your credentials and that control plane '$KONNECT_CONTROL_PLANE', matches a valid control plane in your Konnect org."
     exit 1
 fi
 
