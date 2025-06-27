@@ -69,28 +69,38 @@ command -v deck >/dev/null 2>&1 || { echo "❌ decK is required. Install from: h
 command -v jq >/dev/null 2>&1 || { echo "❌ jq is required."; exit 1; }
 
 # Check GitHub authentication
-echo "🔐 Configuring GitHub authentication..."
 if ! gh auth status >/dev/null 2>&1; then
     echo "❌ Not authenticated with GitHub CLI"
-    echo "   Run: gh auth login"
+    echo "   Run: gh auth login --scopes 'repo,workflow'"
     exit 1
 fi
+
+# Get scopes from auth status
+echo "🔍 Verifying required scopes..."
+auth_output=$(gh auth status 2>&1)
+
+if echo "$auth_output" | grep -qw "repo" && echo "$auth_output" | grep -qw "workflow"; then
+    echo "✅ All required scopes present"
+else
+    echo "⚠️  Missing required scopes"
+    echo "Current auth status:"
+    gh auth status
+    echo ""
+    echo "Please run: gh auth refresh --scopes 'repo,workflow'"
+    exit 1
+fi
+echo "✅ GitHub authentication verified with required scopes"
+
 # Setup git to use gh credentials
 echo "🔧 Linking Git with GitHub CLI..."
 if ! gh auth setup-git 2>/dev/null; then
     echo "⚠️  Warning: Could not automatically configure Git authentication"
     echo "   You may need to run: gh auth refresh --scopes repo"
     echo "   Or ensure you have the necessary permissions"
-    
-    # Ask user if they want to continue
-    read -p "Continue anyway? (y/N): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        exit 1
-    fi
+    exit 1
 fi
 
-echo "✅ GitHub authentication configured"
+echo "✅ git CLI authentication configured"
 
 # Run Kong Gateway migration
 echo ""
