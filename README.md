@@ -2,129 +2,170 @@
 
 **Time:** 15-20 minutes
 
+Experience Kong's Service Catalog by creating a realistic demo environment with GitHub repos, PagerDuty services, and sample APIs. This quickstart creates a complete demo setup and walks you through key Service Catalog features including service discovery, scorecard creation, and API governance.
+
+## Prerequisites
+
+- GitHub CLI (`gh`)
+- Git
+- `jq` (for JSON parsing)
+- A GitHub personal access token with repo permissions
+- Kong Konnect account
+- (Optional) Free PagerDuty developer account
+
 ## Project Structure
 
 ```
 kong-service-catalog-demo/
-├── README.md # This file
-├── setup.sh # One-click setup script
-├── demo-assets/ # template for the monorepo
-│ ├── [OpenAPI specs for each service in root of directory]
-│ ├── services/ # Code for each service
-│ └── .github/workflows/ # GitHub actions to run
-├── scripts/
-│ ├── backup/ # directory for storing existing Kong Konnect CP config
-│ ├── setup-gateway-services.sh # Create gateway services in target CP with decK
-│ ├── setup-pagerduty.sh # Create pagerduty services with API
-│ └── cleanup.sh # Cleanup script
+├── README.md                   # This file
+├── setup.sh                    # One-click setup script
+├── demo-assets/                # Template for the demo repository
+│   ├── [OpenAPI specs]         # API specifications for each service
+│   ├── services/               # Code for each service
+│   └── .github/workflows/      # GitHub Actions workflows
+└── scripts/
+    ├── deck/                     # decK config for target Kong Konnect CP
+        ├── backup/               # Stores any existing Kong Konnect CP config
+    ├── setup-gateway-services.sh # Create gateway services in target CP with decK
+    ├── setup-pagerduty.sh        # Create PagerDuty services via API
+    └── cleanup.sh                # Cleanup script
 ```
 
-## Prerequisites
+## Demo Walkthrough
 
-- GitHub CLI (gh) - Install guide
-- Git
-- decK (Kong's declarative config tool) - Install guide
-- jq (for JSON parsing)
-- A GitHub personal access token with repo permissions
-- Kong Konnect account
-- Kong Gateway running (for gateway migration demo)
-- (Optional) PagerDuty developer account for advanced demo
+### Step 1: Initialize Demo Environment
 
-# Kong Service Catalog Demo Walkthrough
+Run the setup script to create your demo repository:
 
-**Time:** 15-20 minutes
+```bash
+./setup.sh
+```
 
-## Prerequisites ✅
+First, provide the script the name of your target control plane in Kong Konnect. Please ensure you're okay with the configuration on this control plane being overwritten. Worst case, a backup of the existing config will be made and stored under the `/scripts/deck/backup/` directory.
 
-- Demo repository created with `setup.sh`
-- Github integration setup when running `setup.sh`
+Next, the script will ask for a Konnect Personal Access Token if it does not see one in the current terminal session.
 
-## Phase 1: Setup and Discovery (10 minutes)
+Finally, the script will make sure you have the GitHub CLI (`gh`) installed and authenticated.
 
-### 1.1 Connect Pagerduty Integration
+The script will:
 
-1. Log into **Kong Konnect**
-2. Navigate to **Service Catalog** (left sidebar)
-3. Click **Integrations** → **Configure Integrations**
-4. Click **Pagerduty** → **Add Configuration**
-5. Authenticate with Pagerduty
-6. Click **Save**
+- Create Kong Gateway Services in the target control plane you provided
+- Create a new GitHub repository called "SC Demo" under your github profile
+- Generate sample PRs, issues, and GitHub Actions for realistic repo activity
 
-### 1.2 Create Services from resources
+**Action Required:** When the script pauses, connect your GitHub integration in Kong Konnect Service Catalog. Follow the [docs here](https://developer.konghq.com/service-catalog/integrations/github/) to complete and then continue the script.
 
-Navigate to **Service Catalog** → **Resources**. We will create two services managed by different teams by linking the relevant gateway services, pagerduty, and github repo resources.
+Proceed to step 2 while the script continues to run.
 
-**Service 1: "Core Platform Services"**
+### Step 2: Create Services in Service Catalog
 
-- User API - Authentication, user profiles, identity management
-- Payment API - Payment processing, billing, transactions
-- Customer API - Customer data, CRM, legacy customer management
+While the script runs, return to Service Catalog in Kong Konnect. Navigate to Services and create the following two services in Service Catalog by providing a name and description:
 
-Description: Manages the foundational platform services that handle core business entities (users, customers) and critical operations (payments)
+#### Service 1: "Core Platform Services"
 
-**Service 2: "Business Operation Services"**
+**Description:** Manages the foundational platform services that handle core business entities (users, customers) and critical operations (payments)
 
-- Analytics API - Reporting, metrics, business intelligence
-- Inventory API - Product catalog, stock management, inventory tracking
+#### Service 2: "Business Operation Services"
 
-Rationale: Support business operations, reporting, and product management
+**Description:** Support business operations, reporting, and product management
 
-### 1.3 Pull in relevant specs to each service
+### Step 3: Connect PagerDuty Integration (Optional)
 
-## Phase 2: Apply Scorecards (5 minutes)
+Return to the script and optionally proceed with the PagerDuty portion of the setup. This requires a free developer account and API key.
 
-### 2.1 Create Documentation Scorecard
+If you decide to run the PagerDuty portion of the script, then you to add the PagerDuty integration like you did previously with the Github integration. Documentation for this process is provided [here](https://developer.konghq.com/service-catalog/integrations/pagerduty/).
+
+### Step 4: Map Resources to Services
+
+After script completion, map the created resources to their respective services. You can learn more about how resource mapping works [here](https://developer.konghq.com/service-catalog/).
+
+For this quickstart, we need to map the same Github monorepo resource to both services. Then we need to map Kong Gateway resources and PagerDuty resources to each service based on the mapping below:
+
+#### Service 1: "Core Platform Services"
+
+**APIs:**
+
+- **User API** - Authentication, user profiles, identity management
+- **Payment API** - Payment processing, billing, transactions
+- **Customer API** - Customer data, CRM, legacy customer management
+
+#### Service 2: "Business Operation Services"
+
+**APIs:**
+
+- **Analytics API** - Reporting, metrics, business intelligence
+- **Inventory API** - Product catalog, stock management, inventory tracking
+
+### Step 5: Create Scorecards
+
+#### Documentation Scorecard
 
 1. Navigate to **Scorecards** → **Create Scorecard**
 2. Name: "API Documentation Standards"
 3. Add rules:
    - **Documentation**: 1 or more documentation files required
    - **API Spec**: 1 or more API specs required
-   - **API Spec Linting**: Enable these rulesets:
+   - **API Spec Linting**: Enable rulesets:
      - ✅ OAS Recommended
      - ✅ OWASP Top 10
      - ✅ Documentation
-4. Apply to: All services
-5. Click **Save**
+4. Apply to: The two services we just created
 
-**Results:**
+#### Service Maturity Scorecard
 
-- ❌ **user-api**: Fails OWASP (no security definitions)
-- ⚠️ **payment-api**: Fails versioning (outdated spec)
-- ❌ **inventory-api**: No API specification
-- ⚠️ **customer-api**: Deprecated
-- ✅ **analytics-api**: Passes all checks
+1. Create scorecard: "Service Maturity Standards"
+2. Configure the rules to match the image below
+3. Apply to: The two services we just created
 
-### 2.2 Create Best Practices Scorecard
+### Step 6: Import API Specifications
 
-1. Create another scorecard: "Kong Best Practices"
-2. Add rules:
-   - **Gateway Service**: Service must exist in Gateway
-   - **Error Rate**: < 5% over 7 days
-   - **Latency**: < 500ms average
-   - **Authentication**: Required plugin
-3. Apply to: All services
+Import OpenAPI specs into each service by navigating to each service, opening the **API Specs** tabs, add a new API spec, choose Github as the source, select the repo that setup script created, and select the API with the **Spec** dropdown.
 
-**Results:**
+The following still applies for which APIs belong to which services:
 
-- ❌ All services initially fail (not in gateway)
+#### Service 1: "Core Platform Services"
 
-### 2.2 Create Service Maturity Scorecard
+- **User API** - Authentication, user profiles, identity management
+- **Payment API** - Payment processing, billing, transactions
+- **Customer API** - Customer data, CRM, legacy customer management
 
-1. Create another scorecard: "Kong Best Practices"
+#### Service 2: "Business Operation Services"
 
-**Results:**
+- **Analytics API** - Reporting, metrics, business intelligence
+- **Inventory API** - Product catalog, stock management, inventory tracking
 
--
+However, only specs are available for the core platform service:
 
-## Phase 3: Apply fixes
+- **Core Platform Services**: Import 3 API specifications
+- **Business Operation Services**: No specs to import initially
 
-Update specs
+### Step 7: Refresh and Review Scorecards
 
-Apply plugins
+By default, scorecard refresh every 15 minutes so we're going to force a manual refresh.
 
-Resolve pagerduty incidents
+1. **Refresh Documentation Scorecard**: Open the documentation scorecard and save to trigger re-evaluation
+2. **Merge PRs**: While documentation scorecard updates, navigate to the github repo that was created and merge 2 of 3 PRs created in your demo repository
+3. **Refresh Service Maturity Scorecard**: Trigger re-evaluation after PR merges
+4. **Review Results**: Examine both scorecards to see compliance status
 
-Merge PRs
+## Expected Outcomes
 
-Add documentation
+After completing this demo, you'll have:
+
+- A realistic GitHub repository with development activity
+- (Optionally) A PagerDuty account with services and simulated activity
+- Two services properly catalogued with associated resources
+- Working scorecards that demonstrate API governance
+- Experience with Service Catalog's key features including discovery, governance, and compliance tracking
+
+## Cleanup
+
+Run the cleanup script to remove the github repo in your account:
+
+```bash
+./scripts/cleanup.sh
+```
+
+## Next Steps
+
+Begin evaluating how you can can integrate Service Catalog with your actual APIs and services. [Schedule a demo with our in-house experts](https://konghq.com/contact-sales) to learn how Service Catalog can help solve your organization’s use case.

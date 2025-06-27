@@ -58,6 +58,13 @@ command -v git >/dev/null 2>&1 || { echo "❌ Git is required."; exit 1; }
 command -v deck >/dev/null 2>&1 || { echo "❌ decK is required. Install from: https://docs.konghq.com/deck/latest/installation/"; exit 1; }
 command -v jq >/dev/null 2>&1 || { echo "❌ jq is required."; exit 1; }
 
+# Check GitHub authentication
+if ! gh auth status >/dev/null 2>&1; then
+    echo "❌ Not authenticated with GitHub CLI"
+    echo "   Run: gh auth login"
+    exit 1
+fi
+
 # Run Kong Gateway migration
 echo ""
 echo "🔄 Setting up Kong Gateway..."
@@ -68,13 +75,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 echo "✅ Kong Gateway setup complete"
-
-# Check GitHub authentication
-if ! gh auth status >/dev/null 2>&1; then
-    echo "❌ Not authenticated with GitHub CLI"
-    echo "   Run: gh auth login"
-    exit 1
-fi
 
 # Generate unique repo name
 GITHUB_USER=$(gh api user --jq .login)
