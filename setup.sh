@@ -130,7 +130,7 @@ cp -r ../demo-assets/api-services/. .
 
 echo "✅ Repository created successfully!"
 echo ""
-echo "🔗 Repository URL: https://github.com/$GITHUB_USERNAME/$REPO_NAME"
+echo "🔗 Repository URL: https://github.com/$GITHUB_USER/$REPO_NAME"
 echo ""
 echo "======================================"
 echo "⚠️  IMPORTANT: Link this repository in Service Catalog NOW"
