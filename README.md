@@ -73,7 +73,7 @@ While the script runs, return to Service Catalog in Kong Konnect. Navigate to Se
 
 Return to the script and optionally proceed with the PagerDuty portion of the setup. This requires a free developer account and API key.
 
-If you decide to run the PagerDuty portion of the script, then you to add the PagerDuty integration like you did previously with the Github integration. Documentation for this process is provided [here](https://developer.konghq.com/service-catalog/integrations/pagerduty/).
+If you decide to run the PagerDuty portion of the script, then you need to add the PagerDuty integration like you did previously with the Github integration. Documentation for this process is provided [here](https://developer.konghq.com/service-catalog/integrations/pagerduty/).
 
 ### Step 4: Map Resources to Services
 
