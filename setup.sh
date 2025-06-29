@@ -278,22 +278,41 @@ if [[ "$SETUP_PAGERDUTY" =~ ^[Yy]$ ]]; then
     echo "3. Give it a name like 'Kong Demo'"
     echo "4. Copy the key (you won't see it again!)"
     echo ""
-    read -p "Enter your PagerDuty API Key: " PAGERDUTY_API_KEY
     
-    # Validate the API key works
-    echo "🔍 Validating PagerDuty API key..."
-    if curl -s -H "Authorization: Token token=$PAGERDUTY_API_KEY" \
-        -H "Accept: application/vnd.pagerduty+json;version=2" \
-        https://api.pagerduty.com/abilities | grep -q '"abilities"'; then
-        echo "✅ PagerDuty API key validated"
+    while true; do
+        read -p "Enter your PagerDuty API Key (or 'exit' to skip): " PAGERDUTY_API_KEY
         
-        # Create PagerDuty services and incidents
-        echo "🚨 Creating PagerDuty services and sample incidents..."
-        ./scripts/setup-pagerduty.sh "$PAGERDUTY_API_KEY"
+        # Check if user wants to exit
+        if [[ "$PAGERDUTY_API_KEY" == "exit" ]]; then
+            echo "⏭️  Skipping PagerDuty setup"
+            break
+        fi
         
-    else
-        echo "❌ Invalid PagerDuty API key. Skipping PagerDuty setup."
-    fi
+        # Check if key is empty
+        if [[ -z "$PAGERDUTY_API_KEY" ]]; then
+            echo "❌ API key cannot be empty. Please try again or type 'exit' to skip."
+            echo ""
+            continue
+        fi
+        
+        # Validate the API key works
+        echo "🔍 Validating PagerDuty API key..."
+        if curl -s -H "Authorization: Token token=$PAGERDUTY_API_KEY" \
+            -H "Accept: application/vnd.pagerduty+json;version=2" \
+            https://api.pagerduty.com/abilities | grep -q '"abilities"'; then
+            echo "✅ PagerDuty API key validated"
+            
+            # Create PagerDuty services and incidents
+            echo "🚨 Creating PagerDuty services and sample incidents..."
+            ./scripts/setup-pagerduty.sh "$PAGERDUTY_API_KEY"
+            break
+            
+        else
+            echo "❌ Invalid PagerDuty API key. Please check and try again."
+            echo "   Make sure you copied the full key and it has the correct permissions."
+            echo ""
+        fi
+    done
 else
     echo "⏭️  Skipping PagerDuty setup"
 fi
