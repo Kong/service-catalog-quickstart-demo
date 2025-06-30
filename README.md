@@ -4,6 +4,14 @@
 
 Experience Kong's Service Catalog by creating a realistic demo environment with GitHub repos, PagerDuty services, and sample APIs. This quickstart creates a complete demo setup and walks you through key Service Catalog features including service discovery, scorecard creation, and API governance.
 
+Here's a quick video running through quickstart guide. Detailed instructions are provided further down in the readme.
+
+<div>
+    <a href="https://www.loom.com/share/8de07fcb4e054c4eac6ecb0cebe95621">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/8de07fcb4e054c4eac6ecb0cebe95621-3273a14bef6a1e4f-full-play.jpg">
+    </a>
+</div>
+
 ## Prerequisites
 
 - GitHub CLI (`gh`)
