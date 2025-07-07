@@ -58,7 +58,7 @@ Finally, the script will make sure you have the GitHub CLI (`gh`) installed and 
 The script will:
 
 - Create Kong Gateway Services in the target control plane you provided
-- Create a new GitHub repository called "SC Demo" under your github profile
+- Create a new GitHub repository called "kong-demo-apis-{timestamp}" under your github profile
 - Generate sample PRs, issues, and GitHub Actions for realistic repo activity
 
 **Action Required:** When the script pauses, connect your GitHub integration in Kong Konnect Service Catalog. Follow the [docs here](https://developer.konghq.com/service-catalog/integrations/github/) to complete and then continue the script.
