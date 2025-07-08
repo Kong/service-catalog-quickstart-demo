@@ -10,6 +10,85 @@ API_HEADERS=(
     -H "Accept: application/vnd.pagerduty+json;version=2"
 )
 
+# Function to disable email notifications for a specific user
+disable_email_notifications() {
+    local user_email="$1"
+    
+    echo "🔍 Looking up user: $user_email"
+    
+    # Get user details (which includes the notification_rules array)
+    local user_response=$(curl -s "${API_HEADERS[@]}" "https://api.pagerduty.com/users?query=$user_email")
+    local user_data=$(echo "$user_response" | jq ".users[] | select(.email == \"$user_email\")")
+    local user_id=$(echo "$user_data" | jq -r '.id')
+    
+    if [ "$user_id" == "null" ] || [ -z "$user_id" ]; then
+        echo "❌ Could not find user with email: $user_email"
+        echo "   Available users:"
+        curl -s "${API_HEADERS[@]}" "https://api.pagerduty.com/users" | jq -r '.users[] | "   - \(.name) (\(.email))"'
+        return 1
+    fi
+    
+    echo "   Found user ID: $user_id"
+    echo "🔇 Disabling email notifications..."
+    
+    # Extract notification rule IDs directly from the user data
+    local notification_rule_ids=$(echo "$user_data" | jq -r '.notification_rules[]?.id')
+    
+    if [ -z "$notification_rule_ids" ]; then
+        echo "   No notification rules found"
+    else
+        echo "   Found notification rules:"
+        echo "$user_data" | jq -r '.notification_rules[] | "   - \(.id): \(.summary)"'
+        
+        echo "$notification_rule_ids" | while read -r rule_id; do
+            if [ -n "$rule_id" ]; then
+                echo "   Deleting notification rule: $rule_id"
+                curl -s -X DELETE "${API_HEADERS[@]}" \
+                    "https://api.pagerduty.com/users/$user_id/notification_rules/$rule_id" >/dev/null
+            fi
+        done
+    fi
+    
+    echo "✅ Email notifications disabled for $user_email"
+}
+
+# Ask user about disabling notifications
+echo ""
+echo "📧 PagerDuty will send email notifications for services incidents created during this demo."
+echo "You can disable all notifications to avoid spam in your inbox."
+echo ""
+echo "If you decide to proceed, all email notifications for your account will be turned off and will need to be manually turned back on."
+echo ""
+read -p "Disable email notifications for this demo? (y/N): " -r DISABLE_NOTIFICATIONS
+echo ""
+
+if [[ $DISABLE_NOTIFICATIONS =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "Available users in your PagerDuty account:"
+    curl -s "${API_HEADERS[@]}" https://api.pagerduty.com/users | jq -r '.users[] | "  - \(.name) (\(.email))"'
+    echo ""
+    
+    # Add a loop here
+    while true; do
+        read -p "Enter the email address to disable notifications for (or 'skip' to continue): " USER_EMAIL
+        
+        if [[ "$USER_EMAIL" == "skip" ]]; then
+            echo "⏭️  Skipping notification disable"
+            break
+        elif [ -n "$USER_EMAIL" ]; then
+            if disable_email_notifications "$USER_EMAIL"; then
+                break  # Success - exit loop
+            else
+                echo "Please try again or type 'skip' to continue without disabling notifications."
+                echo ""
+            fi
+        else
+            echo "❌ No email provided. Please try again or type 'skip'."
+        fi
+    done
+fi
+
+echo ""
 echo "📦 Creating PagerDuty services..."
 
 # Get the default escalation policy
